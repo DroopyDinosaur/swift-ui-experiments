@@ -235,7 +235,9 @@ struct ContentView: View {
 }
 
 struct ContentView_Previews: PreviewProvider {
+  static var settings = UserSettingsModel(id: "1", isPublic: "No")
+  
   static var previews: some View {
-    ContentView()
+    ContentView().environmentObject(settings)
   }
 }
