@@ -1,6 +1,6 @@
 //
 //  SceneDelegate.swift
-//  TestUI
+//  SwiftUIExperiements
 //
 //  Created by Cory Loken on 12/8/19.
 //  Copyright © 2019 Crunchy Bananas, LLC. All rights reserved.
@@ -24,8 +24,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     // Use a UIHostingController as window root view controller.
     if let windowScene = scene as? UIWindowScene {
-        let window = UIWindow(windowScene: windowScene)
-        window.rootViewController = UIHostingController(rootView: contentView)
+      let window = UIWindow(windowScene: windowScene)
+      let settings = UserSettingsModel(id: "1", isPublic: "No")
+      let users = UsersModel()
+//      users.$content.append(UserModel(id: "1", name: "Row with ID 1"))
+      
+      window.rootViewController = UIHostingController(rootView: contentView
+        .environmentObject(settings)
+        .environmentObject(users)
+      )
         self.window = window
         window.makeKeyAndVisible()
     }
