@@ -83,11 +83,11 @@ class UsersModel: ObservableObject {
 //  @Published var content: [UserModel] = []
   @ObservedObject var content: ObservableArray<UserModel> = try! ObservableArray(array: []).observeChildrenChanges(UserModel.self)
   
-  var c: [UserModel] {
-    get {
-      return content.array
-    }
-  }
+//  var c: [UserModel] {
+//    get {
+//      return content.array
+//    }
+//  }
   
   func append(_ element: UserModel) {
     content.objectWillChange.send()
@@ -177,45 +177,27 @@ struct ListBindingView: View {
   }
 }
 
-struct ContentView: View {
-  @EnvironmentObject private var users: UsersModel
-  @ObservedObject private var user: Model.User = Model.User(name: "")
+struct ListBindingDemo: View {
+//  @EnvironmentObject private var users: UsersModel
+//  @ObservedObject private var user: Model.User = Model.User(name: "")
   @ObservedObject private var u: ObservableArray<Model.User> =  try! ObservableArray(array: []).observeChildrenChanges(Model.User.self)
 
   init() {
     Store.append("users", model: Model.User(id: "1", name: "From Store 1"))
-    Store.append("users", models: [
-      Model.User(id: "2", name: "From Store 2"),
-      Model.User(id: "3", name: "From Store 3")]
-    )
-
-    Store.append("products", model: Model.Product(id: "1", product: "From Product 1"))
-    Store.append("products", model: Model.Product(id: "2", product: "From Product 2", userId: "1"))
-    
+//    Store.append("users", models: [
+//      Model.User(id: "2", name: "From Store 2"),
+//      Model.User(id: "3", name: "From Store 3")]
+//    )
+//
+//    Store.append("products", model: Model.Product(id: "1", product: "From Product 1"))
+//    Store.append("products", model: Model.Product(id: "2", product: "From Product 2", userId: "1"))
+//
     u.array = Store.all("users") as! [Model.User]
-    user = $u.array[0].wrappedValue
+//    user = $u.array[0].wrappedValue
   }
   
   var body: some View {
     Form {
-      Section(header: Text("Modify from ContentView")) {
-        TextField("Edit from ContentView", text: $user.name)
-        Text("Display from ContentView: \(user.name)")
-      }
-      Section(header: Text("Two way @binding")) {
-        TwoWayBindingChildView(text: $user.name)
-      }
-      Section(header: Text("One way var")) {
-        OneWayChildView(text: user.name)
-      }
-      Divider()
-      Section(header: Text("Using @EnvironmentObject")) {
-        BindingWithEnvironmentView()
-      }
-      Section(header: Text("Render @EnvironmentObject")) {
-        SiblingBindingWithEnvironmentView()
-      }
-      Divider()
       Section(header: Text("List View Tests")) {
         Button(action: {
           Store.append("users", model: Model.User(id: "33", name: "Yo"))
@@ -228,8 +210,51 @@ struct ContentView: View {
 //        ListBindingView(users: self.u)
 //      }
       Section(header: Text("Render a static list")) {
-        ListRenderView(users: self.u)
+        ListRenderView(users: u)
       }
+    }
+  }
+}
+
+struct TextInputBindingDemoView: View {
+  @ObservedObject var user: Model.User = Model.User(name: "yoyo")
+  
+  var body: some View {
+    Form {
+      Section(header: Text("Basic binding")) {
+        TextField("Edit", text: $user.name)
+        Text("Display: \(user.name)")
+      }
+      Section(header: Text("Two way @binding")) {
+        TwoWayBindingChildView(text: $user.name)
+      }
+      Section(header: Text("One way var")) {
+        OneWayChildView(text: user.name)
+      }
+      Section(header: Text("Using @EnvironmentObject")) {
+        BindingWithEnvironmentView()
+      }
+      Section(header: Text("Render @EnvironmentObject")) {
+        SiblingBindingWithEnvironmentView()
+      }
+    }
+  }
+}
+
+struct ContentView: View {
+  var body: some View {
+    TabView() {
+      TextInputBindingDemoView().tabItem { Text("Text Inputs") }.tag(0)
+      Text("Second View")
+               .font(.title)
+               .tabItem {
+                   VStack {
+                       Image("second")
+                       Text("Second")
+                   }
+               }
+               .tag(1)
+      ListBindingDemo().tabItem { Text("Tab Label 2") }.tag(2)
     }
   }
 }
