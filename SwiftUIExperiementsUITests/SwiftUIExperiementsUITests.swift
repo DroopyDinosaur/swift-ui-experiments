@@ -27,8 +27,17 @@ class SwiftUIExperiementsUITests: XCTestCase {
     let app = XCUIApplication()
     app.launch()
     
-    // Use recording to get started writing UI tests.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
+    let tablesQuery = app.tables
+    tablesQuery.textFields["Edit"].tap()
+    
+    let textInput = tablesQuery.staticTexts["Display: yoyo"]
+    textInput.tap()
+    
+    let tKey = app.keys["t"]
+    tKey.tap()
+    XCTAssert(tablesQuery.staticTexts["Display: yoyot"].exists)
+    XCTAssert(tablesQuery.staticTexts["Child view value with @Binding: yoyot"].exists)
+    XCTAssert(tablesQuery.staticTexts["Child view with parent -> child binding yoyot"].exists)
   }
   
   func testLaunchPerformance() {
